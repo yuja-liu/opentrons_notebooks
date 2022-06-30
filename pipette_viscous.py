@@ -8,7 +8,7 @@ SDS-PAGE loading buffer with 10% glycerol
 
 from opentrons import protocol_api
 
-def custom_touch_tip():
+def custom_touch_tip(pipette:protocol_api.InstrumentContext, protocol:protocol_api.ProtocolContext):
     "Touching tip with custom parameters"
     
     protocol.delay(5)
@@ -45,7 +45,7 @@ def aspirate_viscous(
     pipette.move_to(well.top(), speed=with_speed)
     
     if if_touch_tip:
-        custom_touch_tip()
+        custom_touch_tip(pipette, protocol)
         
 
 
@@ -58,7 +58,7 @@ def dispense_viscous(
     delay=5, 
     blowout_rate=0.5, 
     with_speed=2, 
-    height=0.5, 
+    disp_height=1.0, 
     if_mix = False,
     if_blowout=True):
     """
