@@ -40,6 +40,8 @@ def aspirate_viscous(
 
     pipette.pick_up_tip()
     pipette.move_to(well.top())
+    # ideally we want to slowly move to the bottom, but it's hard to implement
+    #pipette.move_to(well.bottom(), speed=with_speed)
     pipette.aspirate(vol, well.bottom(), rate=rate)
     protocol.delay(delay)    # delay after aspiration/dispense to allow relaxation of the liquid
     pipette.move_to(well.top(), speed=with_speed)
