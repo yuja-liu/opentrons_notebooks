@@ -13,34 +13,41 @@ _time_vec = []    # time points. Unit: minutes
 _func_vec = []    # functions to execute at corresponding time points
 _param_vec = []    # parameters to be passed to functions
 _str_vec = []    # descriptions
+_n_tip_vec = []    # number of tips required for each operation
 
-def concatenate(time_vec, func_vec, param_vec, str_vec):
+def cat(time_vec, func_vec, param_vec, str_vec, n_tip_vec):
     "Add new list of instructions"
     
     # check lengths
-    if (len(time_vec) != len(func_vec)) or (len(time_vec) != len(str_vec)) or (len(time_vec) != len(param_vec)):
+    if ((len(time_vec) != len(func_vec)) or (len(time_vec) != len(str_vec)) 
+        or (len(time_vec) != len(param_vec)) or (len(time_vec) != len(n_tip_vec))):
         raise Exception("Lengths do not agree. Abort")
     
-    global _time_vec, _func_vec, _param_vec, _str_vec
+    global _time_vec, _func_vec, _param_vec, _str_vec, _n_tip_vec
     _time_vec += list(time_vec)
     _func_vec += list(func_vec)
     _param_vec += list(param_vec)
     _str_vec += list(str_vec)
+    _n_tip_vec += list(n_tip_vec)
     
 def drop():
     "Clear all instructions"
     
-    global _time_vec, _func_vec, _param_vec, _str_vec
+    global _time_vec, _func_vec, _param_vec, _str_vec, _n_tip_vec
     
     _time_vec = []
     _func_vec = []
     _param_vec = []
     _str_vec = []
+    _n_tip_vec = []
 
-def show(unit="minutes"):
+def report(unit="minutes"):
     "Print scheduled steps"
     
-    global _time_vec, _func_vec, _param_vec, _str_vec
+    global _time_vec, _func_vec, _param_vec, _str_vec, _n_tip_vec
+    
+    # report # tips required
+    print("A total of", sum(_n_tip_vec), "tips is required\n")
     
     for i in range(len(_time_vec)):
         # time conversion
@@ -64,7 +71,7 @@ def run(protocol, log_fn):
     - str_vec: a list of descriptions of the function for logging
     """
     
-    global _time_vec, _func_vec, _param_vec, _str_vec
+    global _time_vec, _func_vec, _param_vec, _str_vec, _n_tip_vec
     
     # check agreement for time_vec and func_vec
     if (len(_time_vec) != len(_func_vec)) or (len(_time_vec) != len(_str_vec)) or (len(_time_vec) != len(_param_vec)):
