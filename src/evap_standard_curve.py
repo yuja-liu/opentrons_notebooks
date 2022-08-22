@@ -3,7 +3,7 @@ Yujia Liu    yujialiu@uchicago.edu
 08/19/22
 
 Measurements of the evaporation rate of samples inside
-a 96-well PCR plate.
+a 96-well PCR plate (Bio-rad HSP9601).
 Samples have 17.5% glycerol
 """
 
