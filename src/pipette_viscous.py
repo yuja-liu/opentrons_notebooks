@@ -27,6 +27,7 @@ def aspirate_viscous(
     delay=5, 
     entry_speed=2,
     with_speed=2,
+    asp_height=1,
     if_touch_tip=True):
     """
     Aspirate viscous liquid (will pick up a tip beforehand)
@@ -39,18 +40,20 @@ def aspirate_viscous(
     - delay: delay after aspiration in seconds
     - entry_speed: speed that the tip enters the liquid in units of mm/s (default = 400mm/s)
     - with_speed: withdrawal rate in units of mm/s (default head speed is 400mm/s)
+    - asp_height: height of aspiration. For a small amount of liquid covered with oil, aspirating too close to the bottom
+    actually worsens oil contamination, since the oil will be stuck between the orifice and the bottom
+    2 is ususlly good to avoid this
     - if_touch_tip: whether to touch tip (around the edge of the tube)
     """
     # see https://docs.opentrons.com/v2/new_pipette.html#defaults for more defaults
 
     pipette.pick_up_tip()
-    pipette.move_to(well.top())
     
     # move slowly to the bottom of the well/tube
     pipette.move_to(well.top())    # first hover at top
     def_speed = pipette.default_speed    # back it up
     pipette.default_speed = entry_speed
-    pipette.aspirate(vol, well.bottom(), rate=rate)
+    pipette.aspirate(vol, well.bottom(asp_height), rate=rate)
     pipette.default_speed = def_speed    # restore
     
     protocol.delay(delay)    # delay after aspiration/dispense to allow relaxation of the liquid
@@ -128,4 +131,20 @@ def transfer_viscous(
     aspirate_viscous(pipette, protocol, vol, from_well, if_touch_tip=if_touch_tip)
     dispense_viscous(pipette, protocol, vol, to_well, if_mix=if_mix, if_blowout=if_blowout)
     
+"Manual compensation for the volumetric error of the p10 pipette"
+def calibrated(v):
+    # units: ul
+    return v + 0.34
+
+"""
+Compensating for pipetting viscous liquid (due to presumably both viscosity and
+a different handling protocol, it requires a different calibration)
+"""
+def calibrated_viscous(v):
+    # units: ul
+    #return min(10, (v + 0.82 + 0.15) / 0.97)
+    
+    # new compensation scheme, measured from adding-in volumes
+    # if taking out, compensate for less since there'd be residual liquid on the tip
+    return min(10, v + 0.85)
     

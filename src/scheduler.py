@@ -106,7 +106,8 @@ def run(protocol, log_fn):
         
                 # log
                 time_str = get_time_str()
-                log_file.write(time_str + "\t" + _str_vec[i] + "\n")
+                s = f"{time_str}\t{_str_vec[i]}\t{_param_vec[i]}\n"
+                log_file.write(s)
                 log_file.flush()    # write immediately
                 
                 # flag excuted
