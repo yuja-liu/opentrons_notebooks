@@ -25,7 +25,7 @@ def evap_vol_2h(v_0):
 
 def evap_vol_4h(v_0):
     
-    evap_v = 0.1867 * v_0 + 1.8667 + 2
+    evap_v = 0.1867 * v_0 + 1.8667 + 1
     evap_v = np.round(evap_v, 1)
     
     return evap_v

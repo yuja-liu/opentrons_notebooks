@@ -14,7 +14,7 @@ def custom_touch_tip(pipette:protocol_api.InstrumentContext, protocol:protocol_a
     "Touching tip with custom parameters"
     
     for i in range(repeats):
-        protocol.delay(5)
+        protocol.delay(1)
         pipette.touch_tip(v_offset = -2, speed = 30, radius = 0.8)
     
 
@@ -71,10 +71,12 @@ def dispense_viscous(
     well, 
     rate=0.1, 
     delay=5, 
-    blowout_rate=0.5, 
+    blowout_rate=0.5,
+    mix_rate=1.0,
     entry_speed=2,
     with_speed=2, 
     disp_height=1.0, 
+    mix_height=-1,
     if_mix = False,
     if_blowout=True):
     """
@@ -87,6 +89,7 @@ def dispense_viscous(
     - rate: dispense rate as fraction of default rate (10ul/s)
     - delay: delay after dispense in seconds
     - blowout_rate: blowout rate in ul/s (not fraction!) default is 1000ul/s (i.e. much faster)
+    - mix_rate: fraction of the default rate of mixing. default is 1.0
     - with_speed: withdrawal rate (after blowout if any) in units of mm/s (default head speed is 400mm/s)
     - disp_height: height of the nozzle from bottom during dispense in mm. default is 1mm
     - if_mix: whether to mix (before blowout)
@@ -102,7 +105,9 @@ def dispense_viscous(
     pipette.default_speed = def_speed    # restore
     
     if if_mix:
-        pipette.mix(3, vol)    # mix 3 times
+        if mix_height < 0:    # unset
+            mix_height = disp_height
+        pipette.mix(3, vol, well.bottom(mix_height), rate=mix_rate)    # mix 3 times. Reduce speed to avoid introducing air gap
     protocol.delay(delay)
     
     if if_blowout:
@@ -121,6 +126,9 @@ def transfer_viscous(
     vol,
     from_well,
     to_well,
+    asp_height=1.0,
+    disp_height=1.0,
+    delay=5,
     if_touch_tip=True,
     if_mix=False,
     if_blowout=True):
@@ -128,13 +136,13 @@ def transfer_viscous(
     
     # most parameters are not exposed. If one wants more flexibility, use the building-block commands
     
-    aspirate_viscous(pipette, protocol, vol, from_well, if_touch_tip=if_touch_tip)
-    dispense_viscous(pipette, protocol, vol, to_well, if_mix=if_mix, if_blowout=if_blowout)
+    aspirate_viscous(pipette, protocol, vol, from_well, asp_height=asp_height, delay=delay, if_touch_tip=if_touch_tip)
+    dispense_viscous(pipette, protocol, vol, to_well, disp_height=disp_height, delay=delay, if_mix=if_mix, if_blowout=if_blowout)
     
 "Manual compensation for the volumetric error of the p10 pipette"
-def calibrated(v):
-    # units: ul
-    return v + 0.34
+#def calibrated(v):
+#    # units: ul
+#    return v + 0.34
 
 """
 Compensating for pipetting viscous liquid (due to presumably both viscosity and
@@ -142,9 +150,8 @@ a different handling protocol, it requires a different calibration)
 """
 def calibrated_viscous(v):
     # units: ul
-    #return min(10, (v + 0.82 + 0.15) / 0.97)
     
     # new compensation scheme, measured from adding-in volumes
-    # if taking out, compensate for less since there'd be residual liquid on the tip
-    return min(10, v + 0.85)
+    # taking-out volumes are (within measurement uncertainties) accurate -- no need for compensating
+    return min(10, v + 0.30)
     

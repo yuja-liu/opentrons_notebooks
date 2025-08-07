@@ -1,0 +1,6 @@
+06/03/25 10:07:12	Sample and mix with loading buffer	(0, 2, 0, True)
+06/03/25 10:10:39	Inject KaiA, KaiB, and U-KaiC stocks	(0, 6, True)
+06/03/25 10:19:37	Inject KaiA, KaiB, and U-KaiC stocks	(1, 6, False)
+06/03/25 10:27:52	Sample and mix with loading buffer, and discard from the reaction	(1, 2, 10, True)
+06/03/25 10:31:20	Inject KaiA, KaiB, and U-KaiC stocks	(2, 6, True)
+06/03/25 10:39:37	Inject KaiA, KaiB, and U-KaiC stocks	(3, 6, False)

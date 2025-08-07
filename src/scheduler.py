@@ -47,7 +47,7 @@ def report(unit="minutes"):
     global _time_vec, _func_vec, _param_vec, _str_vec, _n_tip_vec
     
     # report # tips required
-    print("A total of", sum(_n_tip_vec), "tips is required\n")
+    print("The protocol requires a total of", sum(_n_tip_vec), "tip(s)\n")
     
     for i in range(len(_time_vec)):
         # time conversion
